@@ -1,0 +1,335 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Travel Creations Privacy Statement: Learn how we protect your personal information since 1995.">
+    <title>Travel Creations | Privacy Statement</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .header-bg {
+            background-color: #1E3A8A; /* Deep blue corporate color */
+        }
+        .footer-bg {
+            background-color: #1E3A8A; /* Deep blue for footer */
+        }
+        .sticky {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: #FFFFFF;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+        .mobile-menu {
+            transition: all 0.3s ease;
+        }
+        .submenu {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(-10px);
+            z-index: 100;
+        }
+        .group:hover .submenu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @media (max-width: 768px) {
+            .mobile-menu-hidden {
+                transform: translateX(100%);
+            }
+            .submenu {
+                position: static;
+                opacity: 1;
+                transform: none;
+                display: none;
+            }
+            .submenu-open {
+                display: block;
+            }
+            .logo {
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header Section with Logo -->
+    <header class="header-bg text-white sticky shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/150x50?text=Travel+Creations+Logo" alt="Travel Creations Logo" class="h-10 logo transition-all duration-300">
+            </div>
+            <nav class="hidden md:flex space-x-6 items-center">
+                <a href="/" class="hover:text-orange-500">Home</a>
+                <a href="/about" class="hover:text-orange-500">About Us</a>
+                <div class="relative group">
+                    <a href="/corporate" class="hover:text-orange-500">Corporate Travel</a>
+                    <div class="submenu absolute bg-white text-gray-800 shadow-lg rounded mt-2 min-w-[200px]">
+                        <a href="/corporate/technology" class="block px-4 py-2 hover:bg-orange-100">Our Technology</a>
+                        <a href="/corporate/reed-mackay" class="block px-4 py-2 hover:bg-orange-100">Reed & Mackay</a>
+                        <a href="/corporate/management" class="block px-4 py-2 hover:bg-orange-100">Travel Management</a>
+                        <a href="/corporate/missionary" class="block px-4 py-2 hover:bg-orange-100">Missionary Travel</a>
+                        <a href="/corporate/faqs" class="block px-4 py-2 hover:bg-orange-100">Corporate Travel FAQs</a>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <a href="/leisure" class="hover:text-orange-500">Leisure Travel</a>
+                    <div class="submenu absolute bg-white text-gray-800 shadow-lg rounded mt-2 min-w-[200px]">
+                        <a href="/leisure/safaris" class="block px-4 py-2 hover:bg-orange-100">Suggested Safaris</a>
+                        <a href="/leisure/faqs" class="block px-4 py-2 hover:bg-orange-100">Leisure Travel FAQs</a>
+                    </div>
+                </div>
+                <a href="/mice" class="hover:text-orange-500">MICE</a>
+                <a href="/csr" class="hover:text-orange-500">Our CSR</a>
+                <a href="/blog" class="hover:text-orange-500">Blog</a>
+                <a href="/pay-online" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">Pay Online</a>
+            </nav>
+            <div class="md:hidden">
+                <button class="hamburger focus:outline-none" onclick="toggleMobileMenu()">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu mobile-menu-hidden md:hidden bg-blue-900 text-white fixed top-0 right-0 h-full w-64 shadow-lg p-4">
+            <button class="text-white mb-4" onclick="toggleMobileMenu()">Close</button>
+            <a href="/" class="block py-2 hover:text-orange-500">Home</a>
+            <a href="/about" class="block py-2 hover:text-orange-500">About Us</a>
+            <div>
+                <button class="block py-2 hover:text-orange-500 w-full text-left" onclick="toggleSubMenu('corporateSubmenu')">Corporate Travel</button>
+                <div id="corporateSubmenu" class="submenu hidden pl-4">
+                    <a href="/corporate/technology" class="block py-2 hover:text-orange-500">Our Technology</a>
+                    <a href="/corporate/reed-mackay" class="block py-2 hover:text-orange-500">Reed & Mackay</a>
+                    <a href="/corporate/management" class="block py-2 hover:text-orange-500">Travel Management</a>
+                    <a href="/corporate/missionary" class="block py-2 hover:text-orange-500">Missionary Travel</a>
+                    <a href="/corporate/faqs" class="block py-2 hover:text-orange-500">Corporate Travel FAQs</a>
+                </div>
+            </div>
+            <div>
+                <button class="block py-2 hover:text-orange-500 w-full text-left" onclick="toggleSubMenu('leisureSubmenu')">Leisure Travel</button>
+                <div id="leisureSubmenu" class="submenu hidden pl-4">
+                    <a href="/leisure/safaris" class="block py-2 hover:text-orange-500">Suggested Safaris</a>
+                    <a href="/leisure/faqs" class="block py-2 hover:text-orange-500">Leisure Travel FAQs</a>
+                </div>
+            </div>
+            <a href="/mice" class="block py-2 hover:text-orange-500">MICE</a>
+            <a href="/csr" class="block py-2 hover:text-orange-500">Our CSR</a>
+            <a href="/blog" class="block py-2 hover:text-orange-500">Blog</a>
+            <a href="/pay-online" class="block py-2 bg-orange-500 text-white px-4 rounded hover:bg-orange-600">Pay Online</a>
+        </div>
+    </header>
+
+    <!-- Privacy Statement Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl font-bold text-center text-blue-900 mb-8">Privacy Statement</h1>
+            <nav class="text-sm text-gray-600 mb-6 text-center">
+                <a href="/" class="hover:text-orange-500">HOME</a> > <span class="text-orange-500">Privacy Statement</span>
+            </nav>
+
+            <div class="space-y-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">THE PROTECTION OF YOUR PRIVACY IS VERY IMPORTANT TO US</h2>
+                    <p class="text-gray-700">The privacy and security of your personal information is very important to us. We do not share your personal information in ways not disclosed in our privacy policy or without your informed permission. We value your trust very highly, and we strive to protect the confidentiality and appropriate use of any personal information you provide to us.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">THE KIND OF PERSONAL INFORMATION WE MAY COLLECT FROM YOU</h2>
+                    <p class="text-gray-700">We will only collect such personal information as you knowingly and voluntarily divulge to us during your use of our website. We collect information from you when you register on our site, place an order, subscribe to our newsletter, respond to a survey or fill out a form. When ordering or registering on our site, as appropriate, you may be asked to enter your: name, telephone number, date of birth, gender, residential or business address, e-mail address, credit card information. The collection of such information will allow us to protect your confidentiality by verifying your identity. It is our intention that this policy will protect your personal information from being dealt with in any way that is inconsistent with applicable local privacy laws.</p>
+                    <p class="text-gray-700">We strive to ensure the security, integrity and privacy of personal information submitted to our sites, and we review and update our security measures in light of current technologies.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">HOW DO WE USE YOUR PERSONAL INFORMATION?</h2>
+                    <p class="text-gray-700">Any of the information we collect from you may be used in one of the following ways:</p>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
+                        <li>To personalize your experience your information helps us to better respond to your individual needs</li>
+                        <li>To improve our website we continually strive to improve our website offerings based on the information and feedback we receive from you</li>
+                        <li>To improve customer service your information helps us to more effectively respond to your customer service requests and support needs</li>
+                        <li>To process transactions your information, whether public or private, will not be sold, exchanged, transferred, or given to any other company for any reason whatsoever, without your consent, other than for the express purpose of delivering the purchased service requested.</li>
+                        <li>To administer a contest, promotion, survey or other site feature</li>
+                        <li>To send periodic emails. Your business with us is valued and the email address you provide for order processing will only be used to send you information and updates pertaining to your order. If you decide to opt-in to our mailing list, you will receive emails that may include company news, updates, related service information, etc.</li>
+                    </ul>
+                    <p class="text-gray-700">This information is transferred to a centralized database and facilitates aggregated trend analysis used for management purposes such as evaluating our services, client preferences and advertisement planning. In addition, your business with us is valued and we may use the record to send you via mail or email communications such as client surveys or promotional offers and benefits.</p>
+                    <p class="text-gray-700">Note: If at any time you would like to unsubscribe from receiving future emails, we include detailed unsubscribe instructions at the bottom of each email.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">INFORMATION COLLECTION IN RELATION TO CHILDREN</h2>
+                    <p class="text-gray-700">We are in compliance with the requirements of COPPA (Children's Online Privacy Protection Act), we do not collect any information from anyone under 13 years of age. Our website, products and services are all directed to people who are at least 13 years old or older. If you are under 13 and would like to use our web site, please ask a parent or guardian for assistance.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">WHEN AND WITH WHOM WE SHARE YOUR PERSONAL INFORMATION</h2>
+                    <p class="text-gray-700">We do not sell, trade, or otherwise transfer to outside parties your personally identifiable information. This does not include trusted third parties who assist us in operating our website, conducting our business, or servicing you, so long as those parties are in the interest of fulfilling the customer reservations, offering certain products or services in connection with our website; communicating to customers via e-mail; providing customer service, enhancing and improving customer's online experience; enabling access to our partners' sites; providing a personalized online experiences; and completing credit card transactions. We also guarantee that all such third party comply with our private policy.</p>
+                    <p class="text-gray-700">We may also release your information when we believe release is appropriate to comply with the law, enforce our site policies, or protect ours or others rights, property, or safety. However, non-personally identifiable visitor information may be provided to other parties for marketing, advertising, or other uses. This sharing does not include any personal information that can identify any individual person.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">LINKS TO OTHER SITES</h2>
+                    <p class="text-gray-700">Occasionally, at our discretion, we may include or offer third party products or services on our website. These third party sites have separate and independent privacy policies. We advise you to check the privacy policies of other Web sites before disclosing any personal information. We therefore have no responsibility or liability for the content and activities of these linked sites. Nonetheless, we seek to protect the integrity of our site and welcome any feedback about these sites.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">HOW WE PROTECT THE SECURITY OF YOUR PERSONAL INFORMATION</h2>
+                    <p class="text-gray-700">We strive to ensure the security, integrity and privacy of personal information submitted to our sites, and we review and update our security measures in light of current technologies. Unfortunately, no data transmission over the Internet can be guaranteed to be totally secure.</p>
+                    <p class="text-gray-700">However, we will endeavour to take all reasonable steps to protect the personal information you may transmit to us. Once we do receive your transmission, we will also make our best efforts to ensure its security on our systems.</p>
+                    <p class="text-gray-700">In addition, our employees and the contractors who provide services related to our information systems are obliged to respect the confidentiality of any personal information held by us. However, we will not be held responsible for events arising from unauthorized access to your personal information.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">DO WE USE COOKIES?</h2>
+                    <p class="text-gray-700">Yes, Cookies are small files that a site or its service provider transfers to your computer's hard drive through your Web browser (if you allow) that enables the sites or service providers systems to recognize your browser and capture and remember certain information.</p>
+                    <p class="text-gray-700">We use cookies to understand and save your preferences for future visits and compile aggregate data about site traffic and site interaction so that we can offer better site experiences and tools in the future. We may contract with third-party service providers to assist us in better understanding our site visitors. These service providers are not permitted to use the information collected on our behalf except to help us conduct and improve our business.</p>
+                    <p class="text-gray-700">If you prefer, you can choose to have your computer warn you each time a cookie is being sent, or you can choose to turn off all cookies via your browser settings. Like most websites, if you turn your cookies off, some of our services may not function properly.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">EMAIL COMMUNICATIONS</h2>
+                    <p class="text-gray-700">If you choose to receive periodic communications from us, we may from time to time send you email messages describing new promotions, featured hotels and special offers. You can choose to stop receiving these emails at any time by using the "Unsubscribe" feature included on each email message.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">ONLINE PRIVACY POLICY ONLY</h2>
+                    <p class="text-gray-700">This online privacy policy applies only to information collected through our website and not to information collected offline.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">RIGHT OF ACCESS TO DATA</h2>
+                    <p class="text-gray-700">You have a right of access to your data by sending a written request to:</p>
+                    <p class="text-gray-700">Travel Creations Ltd.<br>P.O. Box 14687 00800<br>Nairobi, Kenya<br>Email: info@travelcreations.co.ke</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">CHANGES TO OUR PRIVACY POLICY</h2>
+                    <p class="text-gray-700">Travel Creations Ltd. reserves the right to change, modify or amend this policy at any time. However, if there are changes made to the use of users' personally identifiable information in a manner different from that stated at the time of collection we will notify you by posting a notice on our Web site for 30 days.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">PROBLEMS AND QUESTIONS</h2>
+                    <p class="text-gray-700">If we become aware of any ongoing concerns or problems with our website, we will take these issues seriously and work to address these concerns. If you have any further queries relating to our Privacy Policy, or you have a problem or complaint, please contact us.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer-bg text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Travel Creations</h3>
+                    <p class="text-sm">A premier travel agency in Nairobi, Kenya, offering expert travel solutions since 1995.</p>
+                </div>
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="text-sm space-y-2">
+                        <li><a href="/terms" class="hover:text-orange-500">Terms/Conditions</a></li>
+                        <li><a href="/contact" class="hover:text-orange-500">Contact Us</a></li>
+                        <li><a href="/privacy" class="text-orange-500 font-semibold">Privacy</a></li>
+                        <li><a href="/corporate" class="hover:text-orange-500">Corporate Travel</a></li>
+                        <li><a href="/corporate/missionary" class="hover:text-orange-500">Missionary Travel</a></li>
+                        <li><a href="/leisure" class="hover:text-orange-500">Leisure Travel</a></li>
+                    </ul>
+                </div>
+                <!-- Your Travel Plans -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Your Travel Plans</h3>
+                    <p class="text-sm">We are ready to help you plan your next trip. Our certified agents are available today, Monday, July 21, 2025, from 12:02 PM EAT to 5pm, and Saturday from 8am - 12 noon.</p>
+                    <p class="text-sm mt-2">Call Center: +254 (20) 6648000</p>
+                    <p class="text-sm">Emergencies 24HRS: +254 722 335 866 / +254 734 600 842</p>
+                    <p class="text-sm mt-2">Email: <a href="mailto:reservations@travelcreations.co.ke" class="hover:text-orange-500">reservations@travelcreations.co.ke</a></p>
+                </div>
+                <!-- Mailing List -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Mailing List</h3>
+                    <p class="text-sm mb-4">Sign up for our mailing list to get latest updates and offers.</p>
+                    <form id="newsletterForm" class="space-y-2">
+                        <input type="email" id="newsletter-email" placeholder="Enter your email" class="w-full p-2 border rounded text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500" aria-required="true" required>
+                        <button type="submit" class="w-full bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">Subscribe Now</button>
+                    </form>
+                    <p class="text-sm mt-2">We respect your privacy</p>
+                </div>
+            </div>
+            <div class="mt-4 text-center text-sm">
+                © 2025 All rights reserved to Travel Creations Ltd
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('mobile-menu-hidden');
+        }
+
+        function toggleSubMenu(id) {
+            const submenu = document.getElementById(id);
+            submenu.classList.toggle('submenu-open');
+            submenu.classList.toggle('hidden');
+        }
+
+        document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for subscribing! Check your email for the latest travel updates.');
+        });
+    </script>
+</body>
+</html>

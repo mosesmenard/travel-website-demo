@@ -1,0 +1,363 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Travel Creations Terms & Conditions: Understand the rules governing our website since 1995.">
+    <title>Travel Creations | Terms & Conditions</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        h1, h2, h3 {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .header-bg {
+            background-color: #1E3A8A; /* Deep blue corporate color */
+        }
+        .footer-bg {
+            background-color: #1E3A8A; /* Deep blue for footer */
+        }
+        .sticky {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background-color: #FFFFFF;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+        .mobile-menu {
+            transition: all 0.3s ease;
+        }
+        .submenu {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(-10px);
+            z-index: 100;
+        }
+        .group:hover .submenu {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @media (max-width: 768px) {
+            .mobile-menu-hidden {
+                transform: translateX(100%);
+            }
+            .submenu {
+                position: static;
+                opacity: 1;
+                transform: none;
+                display: none;
+            }
+            .submenu-open {
+                display: block;
+            }
+            .logo {
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header Section with Logo -->
+    <header class="header-bg text-white sticky shadow-lg">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="https://via.placeholder.com/150x50?text=Travel+Creations+Logo" alt="Travel Creations Logo" class="h-10 logo transition-all duration-300">
+            </div>
+            <nav class="hidden md:flex space-x-6 items-center">
+                <a href="/" class="hover:text-orange-500">Home</a>
+                <a href="/about" class="hover:text-orange-500">About Us</a>
+                <div class="relative group">
+                    <a href="/corporate" class="hover:text-orange-500">Corporate Travel</a>
+                    <div class="submenu absolute bg-white text-gray-800 shadow-lg rounded mt-2 min-w-[200px]">
+                        <a href="/corporate/technology" class="block px-4 py-2 hover:bg-orange-100">Our Technology</a>
+                        <a href="/corporate/reed-mackay" class="block px-4 py-2 hover:bg-orange-100">Reed & Mackay</a>
+                        <a href="/corporate/management" class="block px-4 py-2 hover:bg-orange-100">Travel Management</a>
+                        <a href="/corporate/missionary" class="block px-4 py-2 hover:bg-orange-100">Missionary Travel</a>
+                        <a href="/corporate/faqs" class="block px-4 py-2 hover:bg-orange-100">Corporate Travel FAQs</a>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <a href="/leisure" class="hover:text-orange-500">Leisure Travel</a>
+                    <div class="submenu absolute bg-white text-gray-800 shadow-lg rounded mt-2 min-w-[200px]">
+                        <a href="/leisure/safaris" class="block px-4 py-2 hover:bg-orange-100">Suggested Safaris</a>
+                        <a href="/leisure/faqs" class="block px-4 py-2 hover:bg-orange-100">Leisure Travel FAQs</a>
+                    </div>
+                </div>
+                <a href="/mice" class="hover:text-orange-500">MICE</a>
+                <a href="/csr" class="hover:text-orange-500">Our CSR</a>
+                <a href="/blog" class="hover:text-orange-500">Blog</a>
+                <a href="/pay-online" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">Pay Online</a>
+            </nav>
+            <div class="md:hidden">
+                <button class="hamburger focus:outline-none" onclick="toggleMobileMenu()">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu mobile-menu-hidden md:hidden bg-blue-900 text-white fixed top-0 right-0 h-full w-64 shadow-lg p-4">
+            <button class="text-white mb-4" onclick="toggleMobileMenu()">Close</button>
+            <a href="/" class="block py-2 hover:text-orange-500">Home</a>
+            <a href="/about" class="block py-2 hover:text-orange-500">About Us</a>
+            <div>
+                <button class="block py-2 hover:text-orange-500 w-full text-left" onclick="toggleSubMenu('corporateSubmenu')">Corporate Travel</button>
+                <div id="corporateSubmenu" class="submenu hidden pl-4">
+                    <a href="/corporate/technology" class="block py-2 hover:text-orange-500">Our Technology</a>
+                    <a href="/corporate/reed-mackay" class="block py-2 hover:text-orange-500">Reed & Mackay</a>
+                    <a href="/corporate/management" class="block py-2 hover:text-orange-500">Travel Management</a>
+                    <a href="/corporate/missionary" class="block py-2 hover:text-orange-500">Missionary Travel</a>
+                    <a href="/corporate/faqs" class="block py-2 hover:text-orange-500">Corporate Travel FAQs</a>
+                </div>
+            </div>
+            <div>
+                <button class="block py-2 hover:text-orange-500 w-full text-left" onclick="toggleSubMenu('leisureSubmenu')">Leisure Travel</button>
+                <div id="leisureSubmenu" class="submenu hidden pl-4">
+                    <a href="/leisure/safaris" class="block py-2 hover:text-orange-500">Suggested Safaris</a>
+                    <a href="/leisure/faqs" class="block py-2 hover:text-orange-500">Leisure Travel FAQs</a>
+                </div>
+            </div>
+            <a href="/mice" class="block py-2 hover:text-orange-500">MICE</a>
+            <a href="/csr" class="block py-2 hover:text-orange-500">Our CSR</a>
+            <a href="/blog" class="block py-2 hover:text-orange-500">Blog</a>
+            <a href="/pay-online" class="block py-2 bg-orange-500 text-white px-4 rounded hover:bg-orange-600">Pay Online</a>
+        </div>
+    </header>
+
+    <!-- Terms & Conditions Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl font-bold text-center text-blue-900 mb-8">Our Terms & Conditions</h1>
+            <nav class="text-sm text-gray-600 mb-6 text-center">
+                <a href="/" class="hover:text-orange-500">HOME</a> > <span class="text-orange-500">Terms & Conditions</span>
+            </nav>
+
+            <div class="space-y-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">Our Terms & Conditions</h2>
+                    <p class="text-gray-700">Kindly read the terms and conditions that govern the use of our website in full before accessing it. Should they be unacceptable, please do not use the website as using it would imply that that you do accept these terms.</p>
+                    <p class="text-gray-700">The following terms of use apply to this website, which is operated by Travel Creations Ltd. Travel Creations Ltd. reserves the right to modify or discontinue both the web site and the terms of use at any time, and without prior notice to users.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">1. SITE ACCESS</h2>
+                    <p class="text-gray-700">You will be able to access the larger part of this Website without having to register any details with us. However, certain areas of this Website will only be accessible only if you have registered.</p>
+                    <p class="text-gray-700">This agreement is only assignable by Travel Creations Ltd.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">2. USE OF WEBSITE</h2>
+                    <p class="text-gray-700">This website is owned and operated by Travel Creations Ltd. and is for user's personal, non-commercial use. You may use our website for your own purposes. You agree not to modify copy, distribute, transmit, display, perform, reproduce, publish, license, create derivative works from, transfer, or sell or re-sell any data, information, software, products, or services obtained from or through the website. The user may view the site content in its present from and download on any single computer (1) one copy of the materials for personal, non-commercial home use.</p>
+                    <p class="text-gray-700">The copyright and other intellectual property rights in all material on this Website are owned by us or our licensors and must not be reproduced without our prior consent. The user recognizes that unauthorized use of this web site content may subject the user to civil or criminal liability.</p>
+                    <p class="text-gray-700">Travel Creations Ltd. reserves the right at any time to change or discontinue any aspect of or feature of this Website, including but not limited to content, functionality, and means of access or use. Such changes, modifications, or additions shall be effective immediately upon notice to you, which may be given by means not including but not limited to posting on this Terms of Use Agreement page or elsewhere on the Website, e-mail, or any means by which you obtain actual.</p>
+                    <p class="text-gray-700">If you spot any incorrect information on this site we would appreciate it if you could bring it to our notice at info@travelcreations.co.ke</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">3. SITE UPTIME</h2>
+                    <p class="text-gray-700">Travel Creations Ltd. will take all reasonable steps to ensure that this Website is available 24 hours every day, 365 days per year. However, websites do sometimes encounter downtime due to server and, other technical issues. Therefore Travel Creations Ltd. will not be liable if this website is unavailable at any time.</p>
+                    <p class="text-gray-700">This Website may be temporarily unavailable due to issues such as system failure, maintenance or repair or for reasons beyond our control. Where possible Travel Creations Ltd. will try to give our visitors advance warning of maintenance issues but shall not be obliged to do so.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">4. VISITOR CONDUCT</h2>
+                    <p class="text-gray-700">With the exception of personally identifiable information, the use of which is covered under our Privacy Policy, any material you send or post to this Website shall be considered non-proprietary and not confidential. Unless you advise to the contrary Travel Creations Ltd. will be free to copy, disclose, distribute, incorporate and otherwise use such material for any and all purposes.</p>
+                    <p class="text-gray-700">When using this website you shall not post or send to or from this Website any material:</p>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
+                        <li>For which you have not obtained all necessary consents;</li>
+                        <li>That is discriminatory, obscene, pornographic, defamatory, liable to incite racial hatred, in breach of confidentiality or privacy, which may cause annoyance or inconvenience to others, which encourages or constitutes conduct that would be deemed a criminal offence, give rise to a civil liability, or otherwise is contrary to the laws.</li>
+                        <li>Which is harmful in nature including, and without limitation, computer viruses, Trojan horses, corrupted data, or other potentially harmful software or data.</li>
+                    </ul>
+                    <p class="text-gray-700">Travel Creations Ltd. will fully co-operate with any law enforcement authorities or court order requiring us to disclose the identity or other details of any person posting material to this website in breach of the second Paragraph of Visitor Conduct.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">5. LINKS TO OTHER WEBSITES</h2>
+                    <p class="text-gray-700">Any links to third party websites located on this Website are provided for your convenience only and not an endorsement by the Travel Creations Ltd. with regard to the content contained in such third party websites. If you choose to access a third party website linked to from this Website, it is at your own risk. Travel Creations Ltd. does not control or guarantee the accuracy or integrity of the content located on linked third-party websites; or make any representations regarding the content or software of linked third-party websites.</p>
+                    <p class="text-gray-700">If you would like to link to this Website, you may only do so on the basis that you link to, but do not replicate, any page on this Website, and subject to the following conditions:</p>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
+                        <li>You do not in any way imply that Travel Creations Ltd. are endorsing any services or products unless this has been specifically agreed with us;</li>
+                        <li>You do not misrepresent your relationship with us or present any false information about us;</li>
+                        <li>You do not link from a website that is not owned by you; and</li>
+                        <li>Your website does not contain content that is offensive, controversial, infringes any intellectual property rights or other rights of any other person or does not comply in any way with the laws.</li>
+                    </ul>
+                    <p class="text-gray-700">If you choose to link to our website in breach of the second Paragraph of Links to and from Other Websites, you shall fully indemnify us for any loss or damage suffered as a result of your actions.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">6. INFORMATION AND PRESS RELEASES</h2>
+                    <p class="text-gray-700">The Website may contain information and press releases about the Travel Creations Ltd. While this information was believed to be accurate as of the date prepared, we disclaim any duty or obligation to update this information or any press releases. Information about companies other than ours contained in the press release or otherwise, should not be relied upon as being provided or endorsed by us.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">7. PRIVACY POLICY</h2>
+                    <p class="text-gray-700">As a condition to use of this web site, you agree to the terms of our privacy policy ("Privacy Policy"). Information collected about you as you use this site is subject to our Privacy Policy, which may be updated from time to time without notice to you and is hereby incorporated from time to time without notice to you and is hereby incorporated by reference. You may review our Privacy Policy here.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">8. DISCLAIMER</h2>
+                    <p class="text-gray-700">Travel Creations Ltd. takes all reasonable steps to ensure that the information on this Website is correct. However, there is no guarantee for correctness or completeness of material on this Website. Travel Creations Ltd. may make changes to the material on this Website at any time and without notice. The material on this Website may be out of date, or on rare occasions incorrect and Travel Creations Ltd. makes no commitment to ensure that such material is correct or up to date.</p>
+                    <p class="text-gray-700">The material at this Website is provided without any conditions or warranties of any kind. To the maximum extent permitted by law, Travel Creations Ltd. provide access and use of this website on the basis that Travel Creations Ltd. exclude all representations, warranties and conditions which but for these Terms may have effect in relation to this Website.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">9. EXCLUSION OF LIABILITY</h2>
+                    <p class="text-gray-700">You acknowledge that Travel Creations Ltd. does not own, operate or manage the Internet; the Internet is a separate network of computers, independent of and not subject to the control of Travel Creations Ltd; communications on the Internet may not be secure and may be subject to interception of loss. Although Travel Creations Ltd. generally attempts to maintain the accuracy of Content available on the Website, you agree that you must evaluate, and bear all risks associated with, the use of any Content, including any reliance on the accuracy, completeness, or usefulness of such Content. Accordingly, under no circumstances will Travel Creations be liable in any way for any Content, including, but not limited to, for any errors or omissions in any Content, of for any loss or damage of any kind incurred as a result of the use of any Content posted, e-mailed or otherwise transmitted via the Website. Travel Creations Ltd. does not guarantee continuous, uninterrupted or secure access to the Website, and operation of the Website may be interfered with by numerous factors outside of our control. IF YOU ARE DISSATISFIED WITH ANY PORTION OF THE WEBSITE, OR WITH ANY OF THIS AGREEMENT, YOUR SOLE AND EXCLUSIVE REMEDY IS TO DISCONTINUE USING THIS WEBSITE.</p>
+                    <p class="text-gray-700">Nothing in these Terms shall exclude or limit liability for</p>
+                    <ul class="list-disc list-inside text-gray-700 space-y-2 ml-4">
+                        <li>death or personal injury caused by negligence</li>
+                        <li>fraud;</li>
+                        <li>misrepresentation as to a fundamental matter; or</li>
+                        <li>any liability which cannot be excluded or limited under the laws.</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">10. GOVERNING JURISDICTION</h2>
+                    <p class="text-gray-700">This Legal Notice shall be governed by and construed in accordance with country laws. Any dispute(s) arising in connection with this Legal Notice are subject to the exclusive jurisdiction of the Kenyan laws.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">11. MISCELLANEOUS</h2>
+                    <p class="text-gray-700">You acknowledge that, in providing the Materials on this web site, Travel Creations Ltd. has relied upon your agreement to be bound by this agreement and the Privacy Policy. If any provision of this agreement is invalid or unenforceable under applicable law, it is to that extent deemed omitted and the remaining provisions will continue in full force and effect. No waiver of any term of this agreement shall be deemed a continuing waiver of such term or any other term. This agreement shall not be construed or deemed to create any partnership, joint venture, agency, franchise or other form of agreement or relationship other than is expressly set forth herein. This agreement and performance hereunder shall be governed by and interpreted in accordance with the laws of Kenya. Sole and exclusive jurisdiction for any action or proceeding arising out of or related to this agreement or privacy policy shall be in an appropriate state or federal court in Kenya. You agree to submit to the jurisdiction and venue of any state or federal court located in Kenya. This agreement and Privacy Policy constitute the entire agreement between you and Travel Creations Ltd. with respect to the use of this web site.</p>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">12. This agreement is only assignable by Travel Creations Ltd.</h2>
+                </div>
+
+                <div>
+                    <h2 class="text-2xl font-bold text-blue-900 mb-4">13. OUR DETAILS</h2>
+                    <p class="text-gray-700">Travel Creations Ltd.<br>Shelter Afrique Centre, Ground Floor,<br>Longonot Road- Upper Hill<br>Nairobi, Kenya</p>
+                    <p class="text-gray-700">Mobile: 254 722 335866 / 254 734600842<br>Email: info@travelcreations.co.ke</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer-bg text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Travel Creations</h3>
+                    <p class="text-sm">A premier travel agency in Nairobi, Kenya, offering expert travel solutions since 1995.</p>
+                </div>
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                    <ul class="text-sm space-y-2">
+                        <li><a href="/terms" class="text-orange-500 font-semibold">Terms/Conditions</a></li>
+                        <li><a href="/contact" class="hover:text-orange-500">Contact Us</a></li>
+                        <li><a href="/privacy" class="hover:text-orange-500">Privacy</a></li>
+                        <li><a href="/corporate" class="hover:text-orange-500">Corporate Travel</a></li>
+                        <li><a href="/corporate/missionary" class="hover:text-orange-500">Missionary Travel</a></li>
+                        <li><a href="/leisure" class="hover:text-orange-500">Leisure Travel</a></li>
+                    </ul>
+                </div>
+                <!-- Your Travel Plans -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Your Travel Plans</h3>
+                    <p class="text-sm">We are ready to help you plan your next trip. Our certified agents are available today, Monday, July 21, 2025, from 12:10 PM EAT to 5pm, and Saturday from 8am - 12 noon.</p>
+                    <p class="text-sm mt-2">Call Center: +254 (20) 6648000</p>
+                    <p class="text-sm">Emergencies 24HRS: +254 722 335 866 / +254 734 600 842</p>
+                    <p class="text-sm mt-2">Email: <a href="mailto:reservations@travelcreations.co.ke" class="hover:text-orange-500">reservations@travelcreations.co.ke</a></p>
+                </div>
+                <!-- Mailing List -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Mailing List</h3>
+                    <p class="text-sm mb-4">Sign up for our mailing list to get latest updates and offers.</p>
+                    <form id="newsletterForm" class="space-y-2">
+                        <input type="email" id="newsletter-email" placeholder="Enter your email" class="w-full p-2 border rounded text-gray-800 focus:outline-none focus:ring-2 focus:ring-orange-500" aria-required="true" required>
+                        <button type="submit" class="w-full bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">Subscribe Now</button>
+                    </form>
+                    <p class="text-sm mt-2">We respect your privacy</p>
+                </div>
+            </div>
+            <div class="mt-4 text-center text-sm">
+                <p>© 2025 All rights reserved to Travel Creations Ltd</p>
+                <div class="mt-2 flex justify-center space-x-4">
+                    <a href="https://facebook.com/travelcreations" target="_blank" class="text-white hover:text-orange-500">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-2.5c0-1.457.515-2.5 2.5-2.5h2.5v-4h-3.5c-3.467 0-5 1.767-5 5v2.5z"/></svg>
+                    </a>
+                    <a href="https://twitter.com/travelcreations" target="_blank" class="text-white hover:text-orange-500">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-2.717 0-4.92 2.203-4.92 4.917 0 .386.045.762.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.732-.666 1.585-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.396 0-.788-.023-1.175-.068 2.187 1.405 4.788 2.224 7.561 2.224 9.054 0 14.01-7.496 14.01-13.986 0-.213-.005-.426-.014-.637.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                    </a>
+                    <a href="https://instagram.com/travelcreations" target="_blank" class="text-white hover:text-orange-500">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.318 3.608 1.293.975.975 1.231 2.242 1.293 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.318 2.633-1.293 3.608-.975.975-2.242 1.231-3.608 1.293-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.318-3.608-1.293-.975-.975-1.231-2.242-1.293-3.608-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.062-1.366.318-2.633 1.293-3.608.975-.975 2.242-1.231 3.608-1.293 1.266-.058 1.646-.07 4.85-.07zm0-2.163c-3.259 0-3.667.014-4.947.072-1.475.072-2.897.347-4.016.755-1.254.453-2.35 1.049-3.394 1.993-1.043 1.043-1.54 2.14-1.993 3.394-.408 1.119-.683 2.541-.755 4.016-.058 1.28-.072 1.688-.072 4.947s.014 3.667.072 4.947c.072 1.475.347 2.897.755 4.016.453 1.254 1.049 2.35 1.993 3.394 1.043 1.043 2.14 1.54 3.394 1.993 1.119.408 2.541.683 4.016.755 1.28.058 1.688.072 4.947.072s3.667-.014 4.947-.072c1.475-.072 2.897-.347 4.016-.755 1.254-.453 2.35-1.049 3.394-1.993 1.043-1.043 1.54-2.14 1.993-3.394.408-1.119.683-2.541.755-4.016.058-1.28.072-1.688.072-4.947s-.014-3.667-.072-4.947c-.072-1.475-.347-2.897-.755-4.016-.453-1.254-1.049-2.35-1.993-3.394-1.043-1.043-2.14-1.54-3.394-1.993-1.119-.408-2.541-.683-4.016-.755-1.28-.058-1.688-.072-4.947-.072zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4s1.791-4 4-4 4 1.791 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441-.645-1.441-1.441s.645-1.441 1.441-1.441 1.441.645 1.441 1.441-.645 1.441-1.441 1.441z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('mobile-menu-hidden');
+        }
+
+        function toggleSubMenu(id) {
+            const submenu = document.getElementById(id);
+            submenu.classList.toggle('submenu-open');
+            submenu.classList.toggle('hidden');
+        }
+
+        document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for subscribing! Check your email for the latest travel updates.');
+        });
+    </script>
+</body>
+</html>
